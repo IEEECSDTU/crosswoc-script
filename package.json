@@ -1,0 +1,17 @@
+{
+  "name": "crosswoc-script",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/core": "^3.2.5",
+    "json2csv": "^5.0.6",
+    "jsonexport": "^3.2.0",
+    "scrape-it": "^5.3.1"
+  }
+}
