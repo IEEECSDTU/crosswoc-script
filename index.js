@@ -62,23 +62,23 @@ const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
 
 const start = async () => {
   CONSTANTS.listOfReposAndOwners.forEach(async (item) => {
-    await delay(1000);
+    await delay(3000);
     await calcScoreOfParticipantsInRepo(item.ownerName, item.repoName);
+
+    setTimeout(() => {
+      console.log(
+        '\n\n\n\n\n\n\n\n\n allContributors: \n',
+        allContributors
+      );
+  
+      jsonexport(allContributors, function (err, csv) {
+        if (err) return console.error(err);
+        console.log(csv);
+  
+        fs.writeFile('./contributors.csv', csv, (err) => console.error(err));
+      });
+    }, 1000 * 60 * 5);
   });
-
-  setTimeout(() => {
-    console.log(
-      '\n\n\n\n\n\n\n\n\n allContributors: \n',
-      allContributors
-    );
-
-    jsonexport(allContributors, function (err, csv) {
-      if (err) return console.error(err);
-      console.log(csv);
-
-      fs.writeFile('./contributors.csv', csv, (err) => console.error(err));
-    });
-  }, 1000 * 60 * 30);
 };
 
 start();
