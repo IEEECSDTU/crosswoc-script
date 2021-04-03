@@ -16,6 +16,7 @@ const {
 const allContributors = {};
 
 const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
+  console.log(repoOwner, repoName)
   const listOfAllIssues = await getAllIssuesOfRepository(repoOwner, repoName);
   const listOfAllPullRequests = await getAllPullRequestsOfRepository(
     repoOwner,
@@ -51,7 +52,7 @@ const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
           const score = getScoreFromLabels(currentIssue.labels);
           const userGitID = pullRequest.userId;
           addInMap(allContributors, userGitID, score, pullRequest.htmlUrl);
-          console.log(allContributors);
+          // console.log(allContributors);
         }
       }
     } catch (err) {
@@ -61,24 +62,27 @@ const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
 };
 
 const start = async () => {
-  CONSTANTS.listOfReposAndOwners.forEach(async (item) => {
+  for (let item of CONSTANTS.listOfReposAndOwners) {
     await delay(3000);
     await calcScoreOfParticipantsInRepo(item.ownerName, item.repoName);
-
-    setTimeout(() => {
-      console.log(
-        '\n\n\n\n\n\n\n\n\n allContributors: \n',
-        allContributors
-      );
-  
-      jsonexport(allContributors, function (err, csv) {
-        if (err) return console.error(err);
-        console.log(csv);
-  
-        fs.writeFile('./contributors.csv', csv, (err) => console.error(err));
-      });
-    }, 1000 * 60 * 5);
-  });
+  }
 };
 
-start();
+start()
+  .then(() => {
+    console.log('DONE ALL');
+
+    console.log(
+      '\n\n\n\n\n\n\n\n\n allContributors: \n',
+      allContributors,
+      Object.keys(allContributors).length
+    );
+
+    jsonexport(allContributors, function (err, csv) {
+      if (err) return console.error(err);
+      console.log(csv);
+
+      fs.writeFile('./contributors.csv', csv, (err) => console.error(err));
+    });
+  })
+  .catch(console.error);
