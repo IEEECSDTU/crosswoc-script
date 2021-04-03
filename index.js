@@ -16,7 +16,6 @@ const {
 const allContributors = {};
 
 const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
-  console.log(repoOwner, repoName)
   const listOfAllIssues = await getAllIssuesOfRepository(repoOwner, repoName);
   const listOfAllPullRequests = await getAllPullRequestsOfRepository(
     repoOwner,
@@ -26,16 +25,17 @@ const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
   const listOfCrosswocIssues = getIssuesWithCrosswocLabel(listOfAllIssues);
   const filteredPullRequestData = getFilteredPRData(listOfAllPullRequests);
 
-  // console.log(
-  //   listOfAllIssues.length,
-  //   '\n \n \n \n',
-  //   listOfCrosswocIssues.length,
-  //   '\n \n \n \n',
-  //   filteredPullRequestData.length
-  // );
-
-  filteredPullRequestData.forEach(async (pullRequest) => {
+  console.log(
+    listOfAllIssues.length,
+    '\n \n \n \n',
+    listOfCrosswocIssues.length,
+    '\n \n \n \n',
+    filteredPullRequestData.length
+  );
+  
+  for (let pullRequest of filteredPullRequestData) {
     try {
+      delay(3000);
       const { data, response } = await scrapeIt(pullRequest.htmlUrl, {
         linkedIssueName: '.my-1',
       });
@@ -52,19 +52,26 @@ const calcScoreOfParticipantsInRepo = async (repoOwner, repoName) => {
           const score = getScoreFromLabels(currentIssue.labels);
           const userGitID = pullRequest.userId;
           addInMap(allContributors, userGitID, score, pullRequest.htmlUrl);
-          // console.log(allContributors);
+          console.clear();
+          console.log(allContributors);
         }
       }
     } catch (err) {
       console.error(err);
     }
-  });
+  }
+
 };
 
 const start = async () => {
   for (let item of CONSTANTS.listOfReposAndOwners) {
-    await delay(3000);
-    await calcScoreOfParticipantsInRepo(item.ownerName, item.repoName);
+    try {
+      console.log(item)
+      await delay(3000);
+      await calcScoreOfParticipantsInRepo(item.ownerName, item.repoName);
+    } catch (err) {
+      console.error(err);
+    }
   }
 };
 
